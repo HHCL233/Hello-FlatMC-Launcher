@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-cn" style="height: 100%">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="./assets/WebWin.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri App</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body
+    marginheight="0px"
+    marginwidth="0px"
+    style="height: 100%; overflow: hidden"
+  >
+    <div data-tauri-drag-region class="titlebar">
+      <div class="titlebar-button" id="titlebar-minimize">
+        <img
+          src="https://api.iconify.design/mdi:window-minimize.svg"
+          alt="minimize"
+        />
+      </div>
+      <div class="titlebar-button" id="titlebar-maximize">
+        <img
+          src="https://api.iconify.design/mdi:window-maximize.svg"
+          alt="maximize"
+        />
+      </div>
+      <div class="titlebar-button" id="titlebar-close">
+        <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+      </div>
+    </div>
+    <script type="module">
+      const { getCurrentWindow } = window.__TAURI__.window;
+
+      // when using `"withGlobalTauri": true`, you may use
+      // const { getCurrentWindow } = window.__TAURI__.window;
+
+      const appWindow = getCurrentWindow();
+
+      document
+        .getElementById("titlebar-minimize")
+        ?.addEventListener("click", () => appWindow.minimize());
+      document
+        .getElementById("titlebar-maximize")
+        ?.addEventListener("click", () => appWindow.toggleMaximize());
+      document
+        .getElementById("titlebar-close")
+        ?.addEventListener("click", () => appWindow.close());
+    </script>
+    <main class="container">
+      <div
+        style="
+          width: 300px;
+          height: 100%;
+          background-color: #f2f2f2;
+          display: inline-block;
+        "
+      >
+        <win-list id="myList">
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/Home.html')"
+            selected
+            >主页</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/Version.html')"
+            >版本</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/Download.html')"
+            >下载</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/Settings.html')"
+            >设置</uwp-button
+          >
+          <uwp-button onclick="loadUrlInIframe('item','SettingsList/Img.html')"
+            >图库</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/About.html')"
+            >关于</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','SettingsList/Test.html')"
+            >参与测试</uwp-button
+          >
+        </win-list>
+      </div>
+      <div
+        style="
+          height: 99%;
+          width: calc(100% - 305px);
+          vertical-align: top;
+          display: inline-block;
+          background: #ffffff;
+        "
+        class="iframe-container"
+        id="iframeContainer"
+      >
+        <iframe
+          src="SettingsList/Home.html"
+          frameborder="0"
+          scrolling="no"
+          style="border: none; height: 100%; width: 100%; overflow-x: hidden"
+          id="item"
+          style="margin: 0"
+        ></iframe>
+      </div>
+      <script>
+        function showAlert1() {
+          const buttonGroup = document.createElement("win-dropdown");
+          buttonGroup.setAttribute("selectable", ""); // 设置为可选模式
+
+          // 添加按钮
+          buttonGroup.addButton("小", "small");
+          buttonGroup.addButton("中", "medium", true); // 默认选中
+          buttonGroup.addButton("大", "large");
+
+          // 添加到DOM
+          document.body.appendChild(buttonGroup);
+
+          // 监听按钮点击事件
+          buttonGroup.addEventListener("button-click", (e) => {
+            console.log("点击的按钮:", e.detail.text);
+            console.log("值:", e.detail.value);
+
+            // 根据值执行不同操作
+            switch (e.detail.value) {
+              case "small":
+                // 小尺寸逻辑
+                break;
+              case "medium":
+                // 中尺寸逻辑
+                break;
+              case "large":
+                // 大尺寸逻辑
+                break;
+            }
+          });
+
+          // 获取当前选中的值
+          console.log("当前选中:", buttonGroup.selectedValue);
+        }
+      </script>
+      <script>
+        function loadUrlInIframe(iframe, url) {
+          // 获取 iframe 元素
+          let iframeElement;
+
+          if (typeof iframe === "string") {
+            // 如果是字符串，则当作 ID 处理
+            iframeElement = document.getElementById(iframe);
+            if (!iframeElement) {
+              throw new Error(`找不到 ID 为 "${iframe}" 的 iframe 元素`);
+            }
+          } else if (
+            iframe instanceof HTMLElement &&
+            iframe.tagName === "IFRAME"
+          ) {
+            // 如果是 iframe 元素
+            iframeElement = iframe;
+          } else {
+            throw new Error(
+              "参数 iframe 必须是 iframe 元素的 ID 或 iframe 元素本身"
+            );
+          }
+
+          // 检查 URL 是否有效
+          if (typeof url !== "string" || !url.trim()) {
+            throw new Error("URL 必须是有效的非空字符串");
+          }
+
+          // 在 iframe 中加载 URL
+          iframeElement.src = url;
+        }
+      </script>
+      <script>
+        /*
+      document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('myList');
+        
+        // 监听选择变化事件
+        
+        
+        // 动态添加按钮示例
+        setTimeout(() => {
+          
+          // 批量设置按钮示例，第二个参数是选中的索引
+          
+        }, 0);
+      });
+      list.addEventListener('win-list', (e) => {
+          console.log('选中项:', e.detail.selectedValue, 
+                    '索引:', e.detail.selectedIndex);
+        });
+      */
+      </script>
+    </main>
+  </body>
+</html>

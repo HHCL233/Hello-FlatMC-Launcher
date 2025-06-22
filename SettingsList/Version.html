@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="../assets/WebWin.js"></script>
+  </head>
+
+  <body style="height: 100%; width: 100%; margin: 0">
+    <div style="margin-left: 8px">
+      <h2
+        style="font-weight: normal; margin-top: 20px; margin-bottom: 10px"
+        id="d"
+      >
+        选择
+      </h2>
+
+      <p style="font-size: 15px">选择想要游玩的FlatMC版本</p>
+    </div>
+    <script>
+      /*function Download(ver, url) {
+        window.addEventListener("DOMContentLoaded", async () => {
+          await window.downloadToRelativePath(
+            ver,
+            "https://raw.githubusercontent.com/LKBaka/FlatMCSource/main" + url
+          );
+        });
+      }*/
+    </script>
+    <win-open-list id="version-buttons"> </win-open-list>
+    <win-dialog id="myDialog" title="下载"> </win-dialog>
+    <script>
+      function Download_(ver, url) {
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>是否下载版本[" + ver + "]?</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "确定", index: 0, closeOnClick: true },
+          { text: "我不服!", index: 1, closeOnClick: true },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          //const index = e.detail.index;
+          //if (index === 0) {
+          //  alert("你点击了第一个按钮");
+          //} else if (index === 1) {
+          //  alert("你点击了第二个按钮");
+          //}
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+      // 下面是窗口
+      function DownloadOK(text) {
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>" + text + "</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "确定", index: 0, closeOnClick: true },
+          { text: "我不服!", index: 1, closeOnClick: true },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          //const index = e.detail.index;
+          //if (index === 0) {
+          //  alert("你点击了第一个按钮");
+          //} else if (index === 1) {
+          //  alert("你点击了第二个按钮");
+          //}
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+    </script>
+    <script type="module">
+      import { resolveResource } from "@tauri-apps/api/path";
+      import { readTextFile , writeTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+      const resourcePath = await resolveResource("data/ver.json");
+      const langDe = JSON.parse(await readTextFile(resourcePath));
+      console.log(langDe);
+      function generateUwpButtons(dictionary, parentElement) {
+        // 确保父元素存在
+        if (!parentElement) {
+          parentElement = document.getElementById("version-buttons");
+          if (!parentElement) {
+            console.error("找不到ID为version-buttons的元素");
+            return;
+          }
+        }
+
+        // 遍历字典中的每个键值对
+        for (const [key, value] of Object.entries(dictionary)) {
+          // 创建uwp-button元素
+          if (key != "default") {
+            const button = document.createElement("uwp-button");
+
+            // 设置文字内容为键
+            button.textContent = key;
+
+            // 设置url属性为值
+            button.setAttribute("url", value);
+            button.setAttribute(
+              "onclick",
+              "verxz('" + key + "','" + value + "')"
+            );
+            // 如果需要添加其他自定义属性，可以在这里添加
+            // 例如: button.setAttribute('data-custom', 'some-value');
+
+            // 将按钮添加到父元素中
+            parentElement.appendChild(button);
+          }
+        }
+      }
+
+      // 调用函数，传入你的langDe字典
+      generateUwpButtons(langDe);
+
+      window.verxz = async function (ver, url) {
+        langDe["default"] = [ver, url];
+        await writeTextFile(await resolveResource("data/ver.json"), JSON.stringify(langDe));
+      };
+    </script>
+  </body>
+</html>

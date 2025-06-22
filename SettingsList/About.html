@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="../../components/WebWin.js"></script>
+  </head>
+  <body style="height: 100%; width: 100%">
+    <h2 style="font-weight: normal; margin-top: 20px; margin-bottom: 10px" id="d">
+      启动器
+    </h2>
+    <table style="font-size: 16px; border-spacing: 0px 8px">
+      <tr>
+        <td style="width: 200px">版本</td>
+        <td>0.1.1-Beta (Dev频道)</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">构建时间</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td style="width: 200px">当前频道</td>
+        <td>Release频道</td>
+      </tr>
+    </table>
+    <a
+      style="
+        text-decoration: none;
+        color: #057ad3;
+        font-size: 15px;
+        display: block;
+        margin-top: 2.5px;
+        user-select: none;
+      "
+      onclick="web('https://flatmc.fandom.com/zh/wiki/Hello_FlatMC!_Launcher')"
+      >前往FlatMC Wiki</a
+    >
+    <script type="module">
+      import { openPath } from '@tauri-apps/plugin-opener';
+      window.web = async function (url) {
+        await openPath(url);
+      }
+    </script>
+  </body>
+</html>

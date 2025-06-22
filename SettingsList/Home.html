@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="../assets/WebWin.js"></script>
+    <script>
+      const { openPath } = window.__TAURI__.opener;
+
+      async function openSettings(link) {
+        const result = await openPath(link);
+        console.log(result);
+      }
+    </script>
+  </head>
+  <body style="height: 100%; width: 100%; margin: 0">
+    <div style="margin-left: 8px">
+      <h2
+        style="font-weight: normal; margin-top: 20px; margin-bottom: 10px"
+        id="d"
+      >
+        主页
+      </h2>
+
+      <p style="font-size: 15px">今天你看起来很聪明!</p>
+    </div>
+    <div
+      style="
+        position: fixed;
+        bottom: 5px;
+        float: right;
+        width: 100%;
+        background-color: #e6e6e6;
+        height: 65px;
+      "
+    >
+      <win-button
+        style="
+          position: fixed;
+          right: 175px;
+          margin-top: 8px;
+          display: inline-block;
+        "
+        onclick="showAlert()"
+        >切换版本</win-button
+      >
+      <win-button
+        id="start"
+        style="
+          position: fixed;
+          right: 8px;
+          margin-top: 8px;
+          display: inline-block;
+        "
+        onclick="openSettings()"
+        >游玩</win-button
+      >
+    </div>
+    <script type="module">
+      import { resolveResource } from "@tauri-apps/api/path";
+      import { readTextFile } from "@tauri-apps/plugin-fs";
+
+      const resourcePath = await resolveResource("data/ver.json");
+      const langDe = JSON.parse(await readTextFile(resourcePath));
+      document.getElementById("start").innerHTML =
+        "游玩 " + langDe["default"][0];
+      document
+        .getElementById("start")
+        .setAttribute(
+          "onclick",
+          'openSettings("' + langDe["default"][1] + '")'
+        );
+    </script>
+    <win-dialog id="myDialog" title="选择版本"> </win-dialog>
+    <script>
+      function showAlert() {
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>目前只有一个版本哦~请下载后再来看看吧！</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "确定", index: 0, closeOnClick: true },
+          { text: "取消", index: 1, closeOnClick: true },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          //const index = e.detail.index;
+          //if (index === 0) {
+          //  alert("你点击了第一个按钮");
+          //} else if (index === 1) {
+          //  alert("你点击了第二个按钮");
+          //}
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+      // 下面是窗口
+      function showAlert1() {
+        const buttonGroup = document.createElement("win-dropdown");
+        buttonGroup.setAttribute("selectable", ""); // 设置为可选模式
+
+        // 添加按钮
+        buttonGroup.addButton("小", "small");
+        buttonGroup.addButton("中", "medium", true); // 默认选中
+        buttonGroup.addButton("大", "large");
+
+        // 添加到DOM
+        document.body.appendChild(buttonGroup);
+
+        // 监听按钮点击事件
+        buttonGroup.addEventListener("button-click", (e) => {
+          console.log("点击的按钮:", e.detail.text);
+          console.log("值:", e.detail.value);
+
+          // 根据值执行不同操作
+          switch (e.detail.value) {
+            case "small":
+              // 小尺寸逻辑
+              break;
+            case "medium":
+              // 中尺寸逻辑
+              break;
+            case "large":
+              // 大尺寸逻辑
+              break;
+          }
+        });
+
+        // 获取当前选中的值
+        console.log("当前选中:", buttonGroup.selectedValue);
+      }
+    </script>
+  </body>
+</html>

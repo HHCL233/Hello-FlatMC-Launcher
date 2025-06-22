@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="../assets/WebWin.js"></script>
+    <script>
+      window.url = "";
+      window.url = "";
+      async function createVersionButtons() {
+        try {
+          // 获取版本数据
+          const response = await fetch(
+            "https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/versions.json"
+          );
+          if (!response.ok) throw new Error("获取版本数据失败");
+
+          const versionData = await response.json();
+          const downloadList = document.getElementById("DownloadList");
+          console.log(versionData);
+          // 清空现有内容（可选）
+          downloadList.innerHTML = "";
+
+          // 遍历每个版本类型
+          for (const [versionType, versions] of Object.entries(versionData)) {
+            // 过滤掉空版本
+            const validVersions = versions.filter((v) => v.version && v.path);
+
+            // 为每个有效版本创建按钮
+            for (const version of validVersions) {
+              const button = document.createElement("uwp-button");
+
+              // 设置按钮文本和属性
+              button.textContent = `${
+                versionType.charAt(0).toUpperCase() + versionType.slice(1)
+              } v${version.version}`;
+              button.setAttribute(
+                "onclick",
+                `window.url = 'https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/${
+                  version.path
+                }';window.version1 = '${
+                  versionType.charAt(0).toUpperCase() + versionType.slice(1)
+                } v${version.version}';`
+              );
+
+              button.setAttribute("id", `download-button`);
+              // 添加自定义数据属性存储下载路径
+              button.dataset.downloadPath = version.path;
+              button.dataset.versionType = versionType;
+
+              // 添加到下载列表
+              downloadList.appendChild(button);
+            }
+          }
+        } catch (error) {
+          console.error("创建版本按钮时出错:", error);
+          // 可以添加错误处理UI
+          const errorElement = document.createElement("div");
+          errorElement.className = "error-message";
+          errorElement.textContent = "无法加载版本信息，请稍后再试。";
+          document.getElementById("DownloadList").appendChild(errorElement);
+        }
+      }
+      // 调用函数
+      createVersionButtons();
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        window.__TAURI_INVOKE__ = (cmd, args) => {
+          return (
+            window.__TAURI__?.tauri?.invoke(cmd, args) ||
+            Promise.reject("Tauri未初始化")
+          );
+        };
+      });
+    </script>
+  </head>
+
+  <body style="height: 100%; width: 100%; margin: 0">
+    <div style="margin-left: 8px">
+      <h2
+        style="font-weight: normal; margin-top: 20px; margin-bottom: 10px"
+        id="d"
+      >
+        下载
+      </h2>
+
+      <p style="font-size: 15px">下载想要游玩的FlatMC版本</p>
+    </div>
+    <script>
+      const { isPermissionGranted, requestPermission, sendNotification } =
+        window.__TAURI__.notification;
+
+      let permissionGranted = false;
+
+      (async () => {
+        permissionGranted = await isPermissionGranted();
+      })();
+
+      // 手动挂到 window
+      window.DownloadOK = async function (text) {
+        if (!permissionGranted) {
+          const permission = await requestPermission();
+          permissionGranted = permission === "granted";
+        }
+        if (permissionGranted) {
+          sendNotification({ title: "Hello FlatMC! Launcher", body: text });
+        }
+      };
+    </script>
+    <script>
+      /*function Download(ver, url) {
+        window.addEventListener("DOMContentLoaded", async () => {
+          await window.downloadToRelativePath(
+            ver,
+            "https://raw.githubusercontent.com/LKBaka/FlatMCSource/main" + url
+          );
+        });
+      }*/
+    </script>
+    <win-open-list id="DownloadList">
+      <uwp-button onclick="DownloadOK('干什么!')">正在加载中</uwp-button>
+    </win-open-list>
+    <win-dialog id="myDialog" title="下载"> </win-dialog>
+    <script>
+      function Download_(ver, url) {
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>是否下载版本[" + ver + "]?</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "确定", index: 0, closeOnClick: true },
+          { text: "我不服!", index: 1, closeOnClick: true },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          //const index = e.detail.index;
+          //if (index === 0) {
+          //  alert("你点击了第一个按钮");
+          //} else if (index === 1) {
+          //  alert("你点击了第二个按钮");
+          //}
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+      // 下面是窗口
+      function DownloadOK(text) {
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>" + text + "</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "确定", index: 0, closeOnClick: true },
+          { text: "我不服!", index: 1, closeOnClick: true },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          //const index = e.detail.index;
+          //if (index === 0) {
+          //  alert("你点击了第一个按钮");
+          //} else if (index === 1) {
+          //  alert("你点击了第二个按钮");
+          //}
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+    </script>
+    <win-button
+      style="margin-top: 8px; display: inline-block"
+      onclick="DownloadOK('版本 Alpha v0.2.0 已下载完成\n共 0.0 MB')"
+      >下载完成</win-button
+    >
+    <win-button
+      style="margin-top: 8px; display: inline-block"
+      onclick="DownloadOK('版本 Alpha v0.2.0 已开始下载')"
+      >开始下载</win-button
+    >
+    <win-button
+      style="margin-top: 8px; display: inline-block"
+      onclick="DownloadOK('版本 Alpha v0.2.0 下载失败\n原因: 资源不存在')"
+      >下载失败</win-button
+    >
+    <script type="module">
+      import { resolveResource } from "@tauri-apps/api/path";
+      import { Resource, invoke } from "@tauri-apps/api/core";
+      import { download } from "@tauri-apps/plugin-upload";
+      import {
+        readDir,
+        readFile,
+        writeFile,
+        mkdir,
+        rename
+      } from "@tauri-apps/plugin-fs";
+      import { Command } from "@tauri-apps/plugin-shell";
+      import { readTextFile , writeTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+      const resourcePath = await resolveResource("data/ver.json");
+      const langDe = JSON.parse(await readTextFile(resourcePath));
+      console.log(langDe);
+      document.body.addEventListener("click", function (event) {
+        if (event.target.id === "download-button") {
+          downloadFile();
+          alert(window.url + "|" + window.version1);
+        }
+      });
+
+      async function createFolder(Dir) {
+        try {
+          await mkdir(Dir);
+          console.log("文件夹创建成功");
+        } catch (error) {
+          console.error("创建失败:", error);
+        }
+      }
+      async function downloadFile() {
+        console.log(1111);
+        const url = window.url;
+        const ver = window.version1;
+        const relativePath = await resolveResource("ver.rar"); // 相对路径
+        
+        const headers = new Map();
+        headers.set("Content-Type", "text/plain");
+
+        await download(
+          url,
+          relativePath,
+          ({ progressPayload }) => {
+            console.log(`下载进度: ${progress}/${total} bytes`);
+          },
+          headers
+        );
+        
+        DownloadOK('版本 '+ver+' 已下载完成')
+        createFolder(await resolveResource(ver));
+        extractRar(
+          await resolveResource("ver.rar"),
+          await resolveResource(ver)
+        );
+        langDe[ver] = (await resolveResource(ver+"/FlatMC_"+ver.replace(/\s/g, "_")+"_windows_x86-64.exe")).replace(/\\/g, "/");
+        await writeTextFile(await resolveResource("data/ver.json"), JSON.stringify(langDe));
+      }
+
+      async function extractRar(rarPath, outputDir) {
+        const command = Command.sidecar("binaries/unrar", [
+          "x",
+          rarPath,
+          outputDir,
+        ]);
+        const output = await command.execute();
+      }
+      
+    </script>
+    <script>
+      // 事件委托 - 在已存在的父元素上监听
+    </script>
+  </body>
+</html>
