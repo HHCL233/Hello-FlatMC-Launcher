@@ -40,9 +40,10 @@
           right: 175px;
           margin-top: 8px;
           display: inline-block;
+          display:none;
         "
         onclick="showAlert()"
-        >切换版本</win-button
+        >打开数据文件夹</win-button
       >
       <win-button
         id="start"
@@ -51,11 +52,18 @@
           right: 8px;
           margin-top: 8px;
           display: inline-block;
+          
         "
         onclick="openSettings()"
         >游玩</win-button
       >
     </div>
+    <script type="module">
+      import { openPath } from '@tauri-apps/plugin-opener';
+      window.web = async function (url) {
+        await openPath(url);
+      }
+    </script>
     <script type="module">
       import { resolveResource } from "@tauri-apps/api/path";
       import { readTextFile } from "@tauri-apps/plugin-fs";
@@ -74,10 +82,11 @@
     <win-dialog id="myDialog" title="选择版本"> </win-dialog>
     <script>
       function showAlert() {
+        /*
         const dialog = document.getElementById("myDialog");
 
         // 设置内容
-        dialog.content = "<p>目前只有一个版本哦~请下载后再来看看吧！</p>";
+        dialog.content = "<p>前往C:/Users/用户名/AppData/Roaming/Godot/app_userdata/FlatMC即可</p>";
 
         // 设置按钮
         dialog.buttons = [
@@ -97,6 +106,7 @@
 
         // 显示弹窗
         dialog.show();
+        */
       }
       // 下面是窗口
       function showAlert1() {
