@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
-    <script src="./assets/WebWin.js"></script>
+    <script src="./WebWin.js"  type="module"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/main.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda" ></script>
+    <script>
+      eruda.init();
+    </script>
   </head>
 
   <body
@@ -60,31 +64,30 @@
       >
         <win-list id="myList">
           <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/Home.html')"
+            onclick="loadUrlInIframe('item','Home.html')"
             selected
             >主页</uwp-button
           >
           <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/Version.html')"
+            onclick="loadUrlInIframe('item','Version.html')"
             >版本</uwp-button
           >
           <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/Download.html')"
+            onclick="loadUrlInIframe('item','Download.html')"
             >下载</uwp-button
           >
-          <uwp-button onclick="loadUrlInIframe('item','SettingsList/Img.html')"
-          >图库</uwp-button
-        >
+          <uwp-button onclick="loadUrlInIframe('item','Img.html')"
+            >图库</uwp-button
+          >
           <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/Settings.html')"
+            onclick="loadUrlInIframe('item','Settings.html')"
             >设置</uwp-button
           >
           <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/About.html')"
+            onclick="loadUrlInIframe('item','About.html')"
             >关于</uwp-button
           >
-          <uwp-button
-            onclick="loadUrlInIframe('item','SettingsList/Test.html')"
+          <uwp-button onclick="loadUrlInIframe('item','Test.html')"
             >参与测试</uwp-button
           >
         </win-list>
@@ -101,7 +104,7 @@
         id="iframeContainer"
       >
         <iframe
-          src="SettingsList/Home.html"
+          src="Home.html"
           frameborder="0"
           scrolling="no"
           style="border: none; height: 100%; width: 100%; overflow-x: hidden"
