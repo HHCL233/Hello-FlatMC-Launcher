@@ -1127,10 +1127,13 @@ class BaseUWPDialog extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "show") {
-      if (newValue !== null) {
-        this.show();
-      } else {
-        this.hide();
+      // 只有当值实际发生变化时才执行操作
+      if (newValue !== oldValue) {
+        if (newValue !== null) {
+          this.show(); // 改为调用内部方法
+        } else {
+          this.hide(); // 改为调用内部方法
+        }
       }
     } else if (name === "title") {
       this.shadowRoot.getElementById("title").textContent = newValue;
@@ -1140,7 +1143,35 @@ class BaseUWPDialog extends HTMLElement {
   connectedCallback() {
     this.updateButtons();
   }
+  get _show() {
+    if (this._showing) return;
+    this._showing = true;
+    
+    this.style.display = "flex";
+    this.style.pointerEvents = "auto";
+    const container = this.shadowRoot.querySelector(".dialog-container");
+    container.classList.remove("closing");
+    void this.offsetWidth; // 强制重绘
+  }
 
+  // 内部方法，不触发属性变化
+  get _hide() {
+    if (!this._showing) return;
+    this._showing = false;
+    
+    const container = this.shadowRoot.querySelector(".dialog-container");
+    container.classList.add("closing");
+
+    container.addEventListener(
+      "transitionend",
+      () => {
+        this.style.display = "none";
+        this.style.pointerEvents = "none";
+        container.classList.remove("closing");
+      },
+      { once: true }
+    );
+  }
   get show() {
     return this.hasAttribute("show");
   }
@@ -1266,3 +1297,16 @@ customElements.define("win-list", UWPSelectableList);
 customElements.define("win-checkbox", UWPCheckbox);
 customElements.define("win-high-button", UWPHighButton);
 customElements.define("win-open-list", UWPOpenList);
+
+// 在文件末尾添加
+export {
+  UWPButton,
+  UWPAPPBarButton,
+  UWPPasswordBox,
+  UWPRichEditBox,
+  UWPDialog,
+  UWPSelectableList,
+  UWPCheckbox,
+  UWPHighButton,
+  UWPOpenList
+};

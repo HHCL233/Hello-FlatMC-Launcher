@@ -9,8 +9,9 @@
     <script type="module" src="/main.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/eruda" ></script>
     <script>
-      eruda.init();
+      //eruda.init();
     </script>
+    
   </head>
 
   <body
@@ -24,8 +25,8 @@
           src="https://api.iconify.design/mdi:window-minimize.svg"
           alt="minimize"
         />
-      </div>
-      <div class="titlebar-button" id="titlebar-maximize">
+      </div> 
+      <div class="titlebar-button" id="titlebar-maximize" style="display:none;">
         <img
           src="https://api.iconify.design/mdi:window-maximize.svg"
           alt="maximize"
@@ -76,20 +77,20 @@
             onclick="loadUrlInIframe('item','Download.html')"
             >下载</uwp-button
           >
-          <uwp-button onclick="loadUrlInIframe('item','Img.html')"
+          <!--<uwp-button onclick="loadUrlInIframe('item','Img.html')"
             >图库</uwp-button
-          >
-          <uwp-button
+          >-->
+          <!--<uwp-button
             onclick="loadUrlInIframe('item','Settings.html')"
             >设置</uwp-button
-          >
+          >-->
           <uwp-button
             onclick="loadUrlInIframe('item','About.html')"
             >关于</uwp-button
           >
-          <uwp-button onclick="loadUrlInIframe('item','Test.html')"
+          <!--<uwp-button onclick="loadUrlInIframe('item','Test.html')"
             >参与测试</uwp-button
-          >
+          >-->
         </win-list>
       </div>
       <div
@@ -148,6 +149,7 @@
           console.log("当前选中:", buttonGroup.selectedValue);
         }
       </script>
+        
       <script>
         function loadUrlInIframe(iframe, url) {
           // 获取 iframe 元素
@@ -202,5 +204,37 @@
       */
       </script>
     </main>
+    <win-dialog id="myDialog" title="你好!">11</win-dialog>
+     <script type="module">
+       // 导入 UWPDialog 类
+       function DownloadOK(text) {
+     const dialog = document.getElementById("myDialog");
+   
+     // 设置内容
+     dialog.content = "<p>" + text + "</p>";
+   
+     // 设置按钮
+     dialog.buttons = [
+       { text: "确定", index: 0, closeOnClick: true },
+       { text: "确定", index: 1, closeOnClick: true },
+     ];
+   
+     // 监听按钮点击事件
+     dialog.addEventListener("buttonclick", (e) => {
+       //const index = e.detail.index;
+       //if (index === 0) {
+       //  alert("你点击了第一个按钮");
+       //} else if (index === 1) {
+       //  alert("你点击了第二个按钮");
+       //}
+     });
+   
+     // 显示弹窗
+     
+     dialog.show();
+   }
+       DownloadOK("欢迎使用本启动器!")
+       
+     </script>
   </body>
 </html>

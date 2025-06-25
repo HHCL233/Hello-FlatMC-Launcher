@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>关于</title>
-    <script src="./WebWin.js"></script>
+    <script src="./WebWin.js" type="module"></script>
     <script>
       window.url = "";
       window.url = "";
@@ -11,7 +11,7 @@
         try {
           // 获取版本数据
           const response = await fetch(
-            "https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/versions.json"
+            "https://github-proxy.lixxing.top/https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/versions.json"
           );
           if (!response.ok) throw new Error("获取版本数据失败");
 
@@ -36,7 +36,7 @@
               } v${version.version}`;
               button.setAttribute(
                 "onclick",
-                `window.url = 'https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/${
+                `window.url = 'https://github-proxy.lixxing.top/https://raw.githubusercontent.com/LKBaka/FlatMCSource/main/${
                   version.path
                 }';window.version1 = '${
                   versionType.charAt(0).toUpperCase() + versionType.slice(1)
@@ -175,21 +175,6 @@
         dialog.show();
       }
     </script>
-    <win-button
-      style="margin-top: 8px; display: inline-block"
-      onclick="DownloadOK('版本 Alpha v0.2.0 已下载完成\n共 0.0 MB')"
-      >下载完成</win-button
-    >
-    <win-button
-      style="margin-top: 8px; display: inline-block"
-      onclick="DownloadOK('版本 Alpha v0.2.0 已开始下载')"
-      >开始下载</win-button
-    >
-    <win-button
-      style="margin-top: 8px; display: inline-block"
-      onclick="DownloadOK('版本 Alpha v0.2.0 下载失败\n原因: 资源不存在')"
-      >下载失败</win-button
-    >
     <script type="module">
       import { resolveResource } from "@tauri-apps/api/path";
       import { Resource, invoke } from "@tauri-apps/api/core";
@@ -222,7 +207,8 @@
         }
       }
       async function downloadFile() {
-        console.log(1111);
+        //console.log(1111);
+        DownloadOK("请在下载时不要退出此页面，等待下载完成");
         const url = window.url;
         const ver = window.version1;
         const relativePath = await resolveResource("ver.rar"); // 相对路径
