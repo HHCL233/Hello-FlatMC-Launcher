@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="./WebWin.js" type="module"></script>
+  </head>
+  <body style="height: 100%; width: 100%;height: 100%; overflow: hidden">
+    <script type="module">
+      const { getCurrentWindow } = window.__TAURI__.window;
+
+      // when using `"withGlobalTauri": true`, you may use
+      // const { getCurrentWindow } = window.__TAURI__.window;
+
+      const appWindow = getCurrentWindow();
+
+      document
+        .getElementById("titlebar-minimize")
+        ?.addEventListener("click", () => appWindow.minimize());
+      document
+        .getElementById("titlebar-maximize")
+        ?.addEventListener("click", () => appWindow.toggleMaximize());
+      document
+        .getElementById("titlebar-close")
+        ?.addEventListener("click", () => appWindow.close());
+    </script>
+    <h2
+      style="font-weight: normal; margin-top: 20px; margin-bottom: 10px"
+      id="d"
+    >
+      下载
+    </h2>
+
+    <p style="font-size: 15px">正在下载新版本</p>
+    <p style="font-size: 15px">下载完成后此界面将自动关闭</p>
+    <win-button
+            onclick="window.location.href = 'index.html';"
+            >取消</win-button
+          >
+  </body>
+</html>

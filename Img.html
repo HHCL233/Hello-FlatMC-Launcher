@@ -4,8 +4,33 @@
     <meta charset="utf-8" />
     <title>关于</title>
     <script src="./WebWin.js" type="module"></script>
+    <style>
+      .image-container {
+    display: inline-block;
+    margin: 10px;
+    padding: 7.5px;
+    background: #f0f0f0;
+    vertical-align: top;
+}
+
+.image-container img {
+    max-width: 200px;
+    max-height: 200px;
+    display: block;
+    background: linear-gradient(45deg, #f0f0f0 25%, #fff 25%, #fff 50%, #f0f0f0 50%, #f0f0f0 75%, #fff 75%);
+    background-size: 20px 20px;
+}
+
+.image-filename {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+    word-break: break-all;
+    max-width: 200px;
+}
+    </style>
   </head>
-  <body style="height: 100%; width: 100%;margin-left: 0;">
+  <body style="height: 100%; width: 100%;margin-bottom: 8px;margin-top: 0px;margin-left: 0px;">
     <h2
       style="font-weight: normal; margin-top: 20px; margin-bottom: 10px;margin-left: 8px;"
       id="d"
@@ -13,9 +38,104 @@
       图库
     </h2>
     <p style="font-size: 15px;margin-left: 8px;">本地图片</p>
-    <p style="font-size: 15px;margin-left: 8px;">精选图片(2025年6月22日更新)</p>
-    <div style="display: block;margin-left: 8px;width: 100%;"><win-button>更新</win-button><win-button>上传</win-button></div>
-    <img src="f5c6c53382eb862744a2ed76b534e17f.jpg" style="object-fit: cover;width: 600px;margin-left: 6px;margin-top:6px" >
+    <!--<p style="font-size: 15px;margin-left: 8px;">精选图片(2025年6月22日更新)</p>
+    <div style="display: block;margin-left: 8px;width: 100%;"><win-button>更新</win-button><win-button>上传</win-button></div>-->
+    <div id="IMG"></div>
+    <script type="module">
+      import { readDir, readFile } from '@tauri-apps/plugin-fs';
+import { join } from '@tauri-apps/api/path';
+
+// 安全创建图片元素
+async function createSafeImageElement(filePath, fileName) {
+    const container = document.createElement('div');
+    container.className = 'image-container';
     
+    const img = new Image(); // 使用Image对象替代直接创建img元素
+    const filename = document.createElement('div');
+    filename.className = 'image-filename';
+    filename.textContent = fileName;
+    
+    container.appendChild(img);
+    
+    try {
+        // 分块读取文件避免内存问题
+        const contents = await readFile(filePath);
+        
+        // 使用Blob URL替代base64减少内存占用
+        const blob = new Blob([contents], { type: 'image/png' });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // 使用setTimeout避免调用栈堆积
+        await new Promise(resolve => {
+            setTimeout(() => {
+                img.src = blobUrl;
+                img.onload = () => {
+                    URL.revokeObjectURL(blobUrl); // 释放内存
+                    resolve();
+                };
+                img.onerror = (e) => {
+                    console.error(`加载失败: ${fileName}`);
+                    URL.revokeObjectURL(blobUrl);
+                    resolve();
+                };
+            }, 0);
+        });
+        
+    } catch (error) {
+        console.error(`处理文件 ${fileName} 出错:`, error);
+        img.src = '';
+        img.alt = '加载失败';
+    }
+    
+    return container;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const targetElement = document.getElementById('IMG');
+    if (!targetElement) {
+        console.error('目标元素未找到');
+        return;
+    }
+
+    try {
+        const folderPath = 'C:/Users/Administrator/AppData/Roaming/Godot/app_userdata/FlatMC/screenshots';
+        const entries = await readDir(folderPath);
+        
+        // 先获取所有文件信息，不立即加载
+        const validFiles = entries
+            .filter(entry => !entry.children && entry.name.toLowerCase().endsWith('.png'))
+            .map(entry => ({
+                name: entry.name,
+                path: join(folderPath, entry.name)
+            }));
+        
+        if (validFiles.length === 0) {
+            targetElement.innerHTML = '<div class="no-images">没有找到PNG图片</div>';
+            return;
+        }
+        
+        // 清空容器
+        targetElement.innerHTML = '';
+        
+        // 分批加载图片（每批5个）
+        const batchSize = 5;
+        for (let i = 0; i < validFiles.length; i += batchSize) {
+            const batch = validFiles.slice(i, i + batchSize);
+            await Promise.all(batch.map(async file => {
+                const filePath = await file.path;
+                const element = await createSafeImageElement(filePath, file.name);
+                targetElement.appendChild(element);
+            }));
+            
+            // 添加延迟避免UI阻塞
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+    } catch (error) {
+        console.error('初始化失败:', error);
+        targetElement.innerHTML = `<div class="error">加载失败: ${error.message}</div>`;
+    }
+});
+    </script>
   </body>
 </html>

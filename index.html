@@ -11,7 +11,7 @@
     <script>
       //eruda.init();
     </script>
-    
+    <style type="text/css"> html, body { margin: 0; padding: 0; } </style>
   </head>
 
   <body
@@ -77,9 +77,9 @@
             onclick="loadUrlInIframe('item','Download.html')"
             >下载</uwp-button
           >
-          <!--<uwp-button onclick="loadUrlInIframe('item','Img.html')"
+          <uwp-button onclick="loadUrlInIframe('item','Img.html')"
             >图库</uwp-button
-          >-->
+          >
           <!--<uwp-button
             onclick="loadUrlInIframe('item','Settings.html')"
             >设置</uwp-button
@@ -87,6 +87,14 @@
           <uwp-button
             onclick="loadUrlInIframe('item','About.html')"
             >关于</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrl('index.D.html')"
+            >下载(预览)</uwp-button
+          >
+          <uwp-button
+            onclick="loadUrlInIframe('item','DevLogs.html')"
+            >开发者日志(预览)</uwp-button
           >
           <!--<uwp-button onclick="loadUrlInIframe('item','Test.html')"
             >参与测试</uwp-button
@@ -107,7 +115,6 @@
         <iframe
           src="Home.html"
           frameborder="0"
-          scrolling="no"
           style="border: none; height: 100%; width: 100%; overflow-x: hidden"
           id="item"
           style="margin: 0"
@@ -147,6 +154,9 @@
 
           // 获取当前选中的值
           console.log("当前选中:", buttonGroup.selectedValue);
+        }
+        function loadUrl(url) {
+          window.location.href = url;
         }
       </script>
         
